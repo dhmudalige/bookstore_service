@@ -53,4 +53,14 @@ service /bookstore on new http:Listener(9090) {
         books.put(updatedBook);
         return updatedBook;
     }
+
+    // Delete a book (DELETE)
+    resource function delete book/[int id]() returns http:NoContent|http:NotFound {
+        Book? existingBook = books[id];
+        if existingBook is () {
+            return http:NOT_FOUND;
+        }
+        _ = books.remove(id);
+        return http:NO_CONTENT;
+    }    
 }
