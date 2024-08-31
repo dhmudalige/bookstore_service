@@ -20,27 +20,27 @@ table<Book> key(id) books = table [
 
 # A service representing a network-accessible API
 # bound to port `9090`.
-service /bookstore on new http:Listener(9090) {  
-    // Create a new book (POST)
-    // resource function post books(Book book) returns Book|error {
-    //     // Add the book to the in-memory storage
-    //     // books[book.id] = book;
-    //     books.add(book);
-    //     return book;
-    // }
-    
+service /bookstore on new http:Listener(9090) {      
     // Get all books (GET)
     resource function get books() returns Book[] {
         return books.toArray();
     }
     
-    // The path param is defined as a part of the resource path within brackets
-    // along with the type and it is extracted from the request URI.
+    // Get details of a single book by ID (GET)
     resource function get book/[int id]() returns Book|http:NotFound {
         Book? book = books[id];
         if book is () {
             return http:NOT_FOUND;
         }
         return book;
+    }
+
+    // Create a new book (POST)
+    resource function post books(@http:Payload Book newBook) returns Book|error {
+        error? result = books.add(newBook);
+        if result is error {
+            return result;
+        }
+        return newBook;
     }
 }
