@@ -6,16 +6,16 @@ type Book record {|
     readonly int id;
     string title;
     string author;
-    int year;
+    int publication_year;
 |};
 
 // // In-memory storage for books
 // map<Book> books = {};
 
 table<Book> key(id) books = table [
-    {id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: 1925},
-    {id: 2, title: "To Kill a Mockingbird", author: "Harper Lee", year: 1960},
-    {id: 3, title: "1984", author: "George Orwell", year: 1949}
+    {id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", publication_year: 1925},
+    {id: 2, title: "To Kill a Mockingbird", author: "Harper Lee", publication_year: 1960},
+    {id: 3, title: "1984", author: "George Orwell", publication_year: 1949}
 ];
 
 # A service representing a network-accessible API
@@ -32,5 +32,15 @@ service /bookstore on new http:Listener(9090) {
     // Get all books (GET)
     resource function get books() returns Book[] {
         return books.toArray();
+    }
+    
+    // The path param is defined as a part of the resource path within brackets
+    // along with the type and it is extracted from the request URI.
+    resource function get book/[int id]() returns Book|http:NotFound {
+        Book? book = books[id];
+        if book is () {
+            return http:NOT_FOUND;
+        }
+        return book;
     }
 }
