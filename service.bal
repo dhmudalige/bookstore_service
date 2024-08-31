@@ -43,4 +43,14 @@ service /bookstore on new http:Listener(9090) {
         }
         return newBook;
     }
+
+    // Update a book (PUT)
+    resource function put book/[int id](@http:Payload Book updatedBook) returns Book|http:NotFound {
+        Book? existingBook = books[id];
+        if existingBook is () {
+            return http:NOT_FOUND;
+        }
+        books.put(updatedBook);
+        return updatedBook;
+    }
 }
