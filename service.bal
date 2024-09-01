@@ -9,9 +9,6 @@ type Book record {|
     int publication_year;
 |};
 
-// // In-memory storage for books
-// map<Book> books = {};
-
 table<Book> key(id) books = table [
     {id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", publication_year: 1925},
     {id: 2, title: "To Kill a Mockingbird", author: "Harper Lee", publication_year: 1960},
