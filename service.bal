@@ -32,6 +32,18 @@ service /bookstore on new http:Listener(9090) {
         return book;
     }
 
+    // Get details of books by author's name (GET)
+    resource function get books/author(string name) returns Book[]|http:NotFound {
+        Book[] authorBooks = from Book book in books
+                            where book.author.toLowerAscii() == name.toLowerAscii()
+                            select book;
+        
+        if authorBooks.length() == 0 {
+            return http:NOT_FOUND;
+        }
+        return authorBooks;
+    }
+
     // Create a new book (POST)
     resource function post books(@http:Payload Book newBook) returns Book|error {
         error? result = books.add(newBook);
